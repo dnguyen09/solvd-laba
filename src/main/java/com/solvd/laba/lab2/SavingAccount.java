@@ -1,10 +1,11 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.interfaces.InterestRate;
 import com.solvd.laba.lab2.linkedList.LinkedListCustom;
 
 import java.util.Random;
 
-public class SavingAccount extends Account {
+public class SavingAccount extends Account implements InterestRate {
     /*declare properties*/
     private double interestRate;
     private double minimumBalance;
@@ -17,11 +18,11 @@ public class SavingAccount extends Account {
         this.minimumBalance = minimumBalance;
     }
 
-    public SavingAccount(Account account, String accountType, double balance, double interestRate, double minimumBalance) {
-        super(account.getCustomer(), balance);
+    public SavingAccount(Account account, String accountType, double minimumBalance) {
+        super(account.getCustomer(), 0.0);
         this.setAccountType(accountType);
         this.setAccountNumber(generateNumber());
-        this.interestRate = interestRate;
+        this.interestRate = calculateInterestRate();
         this.minimumBalance = minimumBalance;
     }
 
@@ -43,8 +44,15 @@ public class SavingAccount extends Account {
     }
 
     /*methods*/
+    //method return the amount get based on interest rate
     public double getInterestEarned() {
         return this.getBalance() * (interestRate / 100);
+    }
+
+    //Interest rate for saving account
+    @Override
+    public double calculateInterestRate() {
+        return 0.15;
     }
 
     //method printing saving account transaction list

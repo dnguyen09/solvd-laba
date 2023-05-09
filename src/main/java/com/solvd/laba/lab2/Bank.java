@@ -78,9 +78,9 @@ final public class Bank {
     }
 
     //method create saving account for customer
-    public SavingAccount createSavingAccount(Account account, double balance, double interestRate) {
+    public SavingAccount createSavingAccount(Account account) {
         logger.info("Customer " + account.getCustomer().getCustomerName() + " open saving account successful");
-        return new SavingAccount(account, "Saving account", balance, interestRate, 10);
+        return new SavingAccount(account, "Saving account", 10);
     }
 
     //method creating debit card
@@ -113,14 +113,19 @@ final public class Bank {
 
     //method checking minimum payment for credit card
     public void checkMinPayment(CreditCard creditCard) {
-        logger.info("Checking your monthly minimum payment...");
-        creditCard.calculateMinPayment();
-        if (creditCard.hasMinPayment()) {
-            logger.info("No minimum payment this month.");
+        if (creditCard.getMinimumPayment() != 0) {
+            logger.info("Your minimum payment: " + creditCard.getMinimumPayment());
         } else {
-            logger.info("Minimum payment this month: " + creditCard.getMinimumPayment());
-            logger.info("Your outstanding balance: " + creditCard.getBalance());
+            logger.info("No minimum payment this month.");
         }
+    }
+
+    //method to calculate minimum payment of credit card  from bank
+    public void calculateMinPayment(CreditCard creditCard) {
+        creditCard.calculateMinPayment();
+        logger.info("Checking your monthly minimum payment...");
+        logger.info("Minimum payment this month: " + creditCard.getMinimumPayment());
+        logger.info("Your outstanding balance: " + creditCard.getBalance());
     }
 
     //method paying min payment for credit card from checking account

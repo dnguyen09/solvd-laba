@@ -2,6 +2,7 @@ package com.solvd.laba.lab2;
 
 import com.solvd.laba.lab2.exception.CVVException;
 import com.solvd.laba.lab2.interfaces.CardCreating;
+import com.solvd.laba.lab2.interfaces.InterestRate;
 import com.solvd.laba.lab2.linkedList.LinkedListCustom;
 
 import java.text.SimpleDateFormat;
@@ -9,13 +10,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
-public class CreditCard extends Account implements CardCreating {
+public class CreditCard extends Account implements CardCreating, InterestRate {
     /*declare properties*/
     private long creditCardNum;
     private double creditLimit;
     private String expirationDate;
     private int cvv;
     private int pin;
+    private double interestRate;
     private double minimumPayment;
 
     /*constructor*/
@@ -79,6 +81,14 @@ public class CreditCard extends Account implements CardCreating {
 
     public void setPin(int pin) {
         this.pin = pin;
+    }
+
+    public double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(double interestRate) {
+        this.interestRate = interestRate;
     }
 
     public double getMinimumPayment() {
@@ -160,6 +170,19 @@ public class CreditCard extends Account implements CardCreating {
     //method checking if min payment has been paid
     public boolean hasMinPayment() {
         return minimumPayment == 0;
+    }
+
+    //method calculating interest rate for late min payment
+    @Override
+    public double calculateInterestRate() {
+        if (getCustomer().getCreditScore() >= 750) {
+            interestRate = 0.1;
+        } else if (getCustomer().getCreditScore() >= 650) {
+            interestRate = 0.15;
+        } else {
+            interestRate = 0.2;
+        }
+        return interestRate;
     }
 
     //method to calculate for minimum payment

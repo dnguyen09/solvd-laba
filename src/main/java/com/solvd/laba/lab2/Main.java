@@ -50,7 +50,7 @@ public class Main {
         System.out.println();
 
         //create saving account from account
-        SavingAccount save1 = bank.createSavingAccount(account1, 0, 0.15);
+        SavingAccount save1 = bank.createSavingAccount(account1);
         logger.info("Saving number: " + bank.getAccountNumber(save1));
         logger.info(bank.checkBalance(save1));
         bank.checkInterestRate(save1);
@@ -79,10 +79,11 @@ public class Main {
         bank.makePurchase(creditCard1, 76);
         bank.makePurchase(creditCard1, 43);
         bank.makePurchase(creditCard1, 105);
+        bank.calculateMinPayment(creditCard1);
         bank.checkMinPayment(creditCard1);
         bank.withdrawal(creditCard1, 200);
         bank.payMinPayment(creditCard1, check1);
-        logger.info(bank.checkBalance(check1));
+        bank.checkMinPayment(creditCard1);
         bank.printList(creditCard1);
     }
 }
