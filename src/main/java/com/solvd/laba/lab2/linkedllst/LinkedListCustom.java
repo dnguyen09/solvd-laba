@@ -1,4 +1,4 @@
-package com.solvd.laba.lab2.linkedList;
+package com.solvd.laba.lab2.linkedllst;
 
 import java.util.NoSuchElementException;
 

@@ -2,14 +2,16 @@ package com.solvd.laba.lab2;
 
 import com.solvd.laba.lab2.exception.CreditCheckException;
 import com.solvd.laba.lab2.exception.WithdrawalException;
-import com.solvd.laba.lab2.linkedList.LinkedListCustom;
+import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
 final public class Bank {
-    static Logger logger = LogManager.getLogger(Bank.class);
+    //Logger
+    private static final Logger LOGGER = LogManager.getLogger(Bank.class);
+
     /*declare properties*/
     private String name;
     private String location;
@@ -54,7 +56,7 @@ final public class Bank {
     //method to print message if customer is qualified
     public String makeCreditCheck(Customer customer) throws CreditCheckException {
         String qualificationStatus = CreditCheck.isQualifyAcc(customer);
-        logger.info("Hi " + customer.getCustomerName() + "! based on your date of birth " +
+        LOGGER.info("Hi " + customer.getCustomerName() + "! based on your date of birth " +
                 customer.getDateOfBirth() + " and your credit score " + customer.getCreditScore() + "\n" +
                 "Here are your result:");
         if (qualificationStatus.equals("Qualified")) {
@@ -66,66 +68,66 @@ final public class Bank {
 
     //method to store customer information
     public Account createAccount(Customer customer, int balance) {
-        logger.info("Congrats " + customer.getCustomerName() + ", you have became our customer!");
+        LOGGER.info("Congrats " + customer.getCustomerName() + ", you have became our customer!");
         customerList.add(customer);
         return new Account(customer, balance);
     }
 
     //method create checking account for customer
     public CheckingAccount createCheckingAccount(Account account) {
-        logger.info("Customer " + account.getCustomer().getCustomerName() + " open checking account successful");
+        LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " open checking account successful");
         return new CheckingAccount(account, "Checking account", 12);
     }
 
     //method create saving account for customer
     public SavingAccount createSavingAccount(Account account) {
-        logger.info("Customer " + account.getCustomer().getCustomerName() + " open saving account successful");
+        LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " open saving account successful");
         return new SavingAccount(account, "Saving account", 10);
     }
 
     //method creating debit card
     public DebitCard createDebitCard(Account account) {
-        logger.info("Customer " + account.getCustomer().getCustomerName() + " has created a debit card");
+        LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " has created a debit card");
         return new DebitCard(account, "Debit card", 1990);
     }
 
     //method creating credit card
     public CreditCard createCreditCard(Account account) {
-        logger.info("Customer " + account.getCustomer().getCustomerName() + " has created a credit card");
+        LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " has created a credit card");
         return new CreditCard(account, "Credit card", 1021);
     }
 
     //method check monthly service fee for checking account
     public void checkMonthlyFee(CheckingAccount checkingAccount) {
         if (checkingAccount.isMonthlyFee()) {
-            logger.info("Checking your monthly fee status...");
-            logger.info("Your balance: " + checkingAccount.getBalance() + "\n" +
+            LOGGER.info("Checking your monthly fee status...");
+            LOGGER.info("Your balance: " + checkingAccount.getBalance() + "\n" +
                     "Your monthly fee is: " + checkingAccount.getMonthlyFee());
             checkingAccount.setBalance(checkingAccount.getBalance() - checkingAccount.getMonthlyFee());
-            logger.info("$" + checkingAccount.getMonthlyFee() + " has been deducted as monthly service fee" + "\n" +
+            LOGGER.info("$" + checkingAccount.getMonthlyFee() + " has been deducted as monthly service fee" + "\n" +
                     "Your balance: " + checkingAccount.getBalance() + "\n" +
                     "To avoid monthly fee, please have your checking account balance greater than 500 \n");
         } else {
-            logger.info("Checking your monthly fee status...");
-            logger.info("You have no monthly service fee\n");
+            LOGGER.info("Checking your monthly fee status...");
+            LOGGER.info("You have no monthly service fee\n");
         }
     }
 
     //method checking minimum payment for credit card
     public void checkMinPayment(CreditCard creditCard) {
         if (creditCard.getMinimumPayment() != 0) {
-            logger.info("Your minimum payment: " + creditCard.getMinimumPayment());
+            LOGGER.info("Your minimum payment: " + creditCard.getMinimumPayment());
         } else {
-            logger.info("No minimum payment this month.");
+            LOGGER.info("No minimum payment this month.");
         }
     }
 
     //method to calculate minimum payment of credit card  from bank
     public void calculateMinPayment(CreditCard creditCard) {
         creditCard.calculateMinPayment();
-        logger.info("Checking your monthly minimum payment...");
-        logger.info("Minimum payment this month: " + creditCard.getMinimumPayment());
-        logger.info("Your outstanding balance: " + creditCard.getBalance());
+        LOGGER.info("Checking your monthly minimum payment...");
+        LOGGER.info("Minimum payment this month: " + creditCard.getMinimumPayment());
+        LOGGER.info("Your outstanding balance: " + creditCard.getBalance());
     }
 
     //method paying min payment for credit card from checking account
@@ -136,13 +138,13 @@ final public class Bank {
     //method checking interest rate for saving account
     public void checkInterestRate(SavingAccount acc) {
         if (acc.getBalance() < acc.getMinimumBalance()) {
-            logger.info("Checking your interest rate...");
-            logger.info("Your Saving account required " + acc.getMinimumBalance() +
+            LOGGER.info("Checking your interest rate...");
+            LOGGER.info("Your Saving account required " + acc.getMinimumBalance() +
                     " minimum balance to keep the account open");
         } else {
-            logger.info("Checking your interest rate...");
-            logger.info("Your interest rate: " + acc.getInterestRate());
-            logger.info("Your interest earned " + acc.getInterestEarned() + "\n");
+            LOGGER.info("Checking your interest rate...");
+            LOGGER.info("Your interest rate: " + acc.getInterestRate());
+            LOGGER.info("Your interest earned " + acc.getInterestEarned() + "\n");
         }
     }
 
@@ -163,7 +165,7 @@ final public class Bank {
             }
             account.withdrawal(amount);
         } catch (WithdrawalException e) {
-            logger.info(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
     }
 
@@ -175,7 +177,7 @@ final public class Bank {
     public void transferMoney(CheckingAccount fromAccount, Account toAccount, double amount) {
         fromAccount.withdrawal(amount, "Transfer to account " + toAccount.getAccountNumber());
         toAccount.deposit(amount, "Transfer from account " + fromAccount.getAccountNumber());
-        logger.info("Transfer " + amount + " from account " + fromAccount.getAccountNumber() + " to account " + toAccount.getAccountNumber() + " successful");
+        LOGGER.info("Transfer " + amount + " from account " + fromAccount.getAccountNumber() + " to account " + toAccount.getAccountNumber() + " successful");
     }
 
     //method print list of transaction from account

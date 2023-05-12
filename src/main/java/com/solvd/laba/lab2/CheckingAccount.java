@@ -1,10 +1,15 @@
 package com.solvd.laba.lab2;
 
-import com.solvd.laba.lab2.linkedList.LinkedListCustom;
+import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
 
 public class CheckingAccount extends Account {
+    //Logger
+    private static final Logger LOGGER = LogManager.getLogger(CheckingAccount.class);
+
     /*declare properties*/
     private double monthlyFee;
 
@@ -45,10 +50,10 @@ public class CheckingAccount extends Account {
 
     @Override
     public void printList() {
-        logger.info(String.format("%60s", "Transaction List of Checking account "));
+        LOGGER.info(String.format("%60s", "Transaction List of Checking account "));
         LinkedListCustom<Transaction> checkingList = getTransactionList();
         for (int i = 0; i < getTransactionList().getSize(); i++) {
-            logger.info(checkingList.get(i));
+            LOGGER.info(checkingList.get(i));
         }
     }
 
@@ -62,6 +67,4 @@ public class CheckingAccount extends Account {
         lastAccNum++;
         return Long.parseLong(checkingAccNum);
     }
-
-
 }

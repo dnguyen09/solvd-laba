@@ -4,22 +4,22 @@ package com.solvd.laba.lab2;
 import com.solvd.laba.lab2.exception.InsufficientBalanceException;
 import com.solvd.laba.lab2.interfaces.Payment;
 import com.solvd.laba.lab2.interfaces.PrintList;
-import com.solvd.laba.lab2.linkedList.LinkedListCustom;
+import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
 
 public class Account extends AccountNumber implements PrintList, Payment {
+    //LOGGER
+    private static final Logger LOGGER = LogManager.getLogger(Account.class);
+
     /*declare properties*/
     private long accountNumber;
     private double balance;
     private String accountType;
     private Customer customer;
     private LinkedListCustom<Transaction> transactionList;
-
-    //logger
-    Logger logger = LogManager.getLogger(Account.class);
 
     /*constructors*/
     public Account(long accountNumber, double balance, String accountType, Customer customer) {
@@ -88,7 +88,7 @@ public class Account extends AccountNumber implements PrintList, Payment {
     public void deposit(double amount) {
         balance += amount;
         transactionList.add(new Transaction(amount, "Deposit"));
-        logger.info("Deposit " + amount + " successful to " + accountType);
+        LOGGER.info("Deposit " + amount + " successful to " + accountType);
     }
 
     //overloading method deposit to transfer amount with type
@@ -99,11 +99,11 @@ public class Account extends AccountNumber implements PrintList, Payment {
 
     public void withdrawal(double amount) {
         if (amount > balance) {
-            logger.info("Withdrawal failed! the amount withdrawal excess balance");
+            LOGGER.info("Withdrawal failed! the amount withdrawal excess balance");
         } else {
             balance -= amount;
             transactionList.add(new Transaction(amount, "Withdraw"));
-            logger.info("Withdrawal " + amount + " successful from " + accountType);
+            LOGGER.info("Withdrawal " + amount + " successful from " + accountType);
         }
     }
 
@@ -117,18 +117,18 @@ public class Account extends AccountNumber implements PrintList, Payment {
                 transactionList.add(new Transaction(amount, accountType));
             }
         } catch (InsufficientBalanceException e) {
-            logger.info(e.getMessage());
+            LOGGER.error(e.getMessage());
         }
     }
 
     @Override
     public void makePurchase(double amount) {
         if (amount > balance) {
-            logger.info("Purchase failed! your account don't have enough balance for making purchase");
+            LOGGER.info("Purchase failed! your account don't have enough balance for making purchase");
         } else {
             balance -= amount;
             transactionList.add(new Transaction(amount, "Purchase"));
-            logger.info("Purchase " + amount + " successful from " + accountType);
+            LOGGER.info("Purchase " + amount + " successful from " + accountType);
         }
     }
 
@@ -140,7 +140,7 @@ public class Account extends AccountNumber implements PrintList, Payment {
     //method print list of transaction
     public void printList() {
         for (int i = 0; i < transactionList.getSize(); i++) {
-            logger.info(transactionList.get(i));
+            LOGGER.info(transactionList.get(i));
         }
     }
 

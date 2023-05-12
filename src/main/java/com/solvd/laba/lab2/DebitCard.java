@@ -2,7 +2,9 @@ package com.solvd.laba.lab2;
 
 import com.solvd.laba.lab2.exception.CVVException;
 import com.solvd.laba.lab2.interfaces.CardCreating;
-import com.solvd.laba.lab2.linkedList.LinkedListCustom;
+import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -10,6 +12,9 @@ import java.util.Date;
 import java.util.Random;
 
 public class DebitCard extends Account implements CardCreating {
+    //logger
+    private static final Logger LOGGER = LogManager.getLogger(DebitCard.class);
+
     /*declare properties*/
     private long debitCardNumb;
     private String expirationDate;
@@ -102,7 +107,7 @@ public class DebitCard extends Account implements CardCreating {
             }
             return cvv;
         } catch (CVVException e) {
-            logger.info("Error: " + e.getMessage());
+            LOGGER.error("Error: " + e.getMessage());
             return -1;
         }
     }
@@ -115,10 +120,10 @@ public class DebitCard extends Account implements CardCreating {
     //method printing debit card transaction list
     @Override
     public void printList() {
-        logger.info(String.format("%60s", "Transaction List of Debit card "));
+        LOGGER.info(String.format("%60s", "Transaction List of Debit card "));
         LinkedListCustom<Transaction> debitCardList = getTransactionList();
         for (int i = 0; i < debitCardList.getSize(); i++) {
-            logger.info(debitCardList.get(i));
+            LOGGER.info(debitCardList.get(i));
         }
     }
 

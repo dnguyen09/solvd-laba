@@ -3,7 +3,9 @@ package com.solvd.laba.lab2;
 import com.solvd.laba.lab2.exception.CVVException;
 import com.solvd.laba.lab2.interfaces.CardCreating;
 import com.solvd.laba.lab2.interfaces.InterestRate;
-import com.solvd.laba.lab2.linkedList.LinkedListCustom;
+import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -11,6 +13,9 @@ import java.util.Date;
 import java.util.Random;
 
 public class CreditCard extends Account implements CardCreating, InterestRate {
+    //Logger
+    private static final Logger LOGGER = LogManager.getLogger(CreditCard.class);
+
     /*declare properties*/
     private long creditCardNum;
     private double creditLimit;
@@ -134,7 +139,7 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
             }
             return cvv;
         } catch (CVVException e) {
-            logger.info("Error: " + e.getMessage());
+            LOGGER.info("Error: " + e.getMessage());
             return -1;
         }
     }
@@ -192,21 +197,21 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
         if (getBalance() + amount < getCreditLimit()) {
             outStandingBalance += amount;
             setBalance(outStandingBalance);
-            logger.info("Purchase successful");
+            LOGGER.info("Purchase successful");
             getTransactionList().add(new Transaction(amount, "Purchase"));
-            logger.info("Purchase " + amount + " successful from " + getAccountType());
+            LOGGER.info("Purchase " + amount + " successful from " + getAccountType());
         } else {
-            logger.info("Purchase failed! the purchase amount excess credit limit on your card");
+            LOGGER.info("Purchase failed! the purchase amount excess credit limit on your card");
         }
     }
 
     //method print list credit card
     @Override
     public void printList() {
-        logger.info(String.format("%60s", "Transaction List of Credit card "));
+        LOGGER.info(String.format("%60s", "Transaction List of Credit card "));
         LinkedListCustom<Transaction> creditCardList = getTransactionList();
         for (int i = 0; i < creditCardList.getSize(); i++) {
-            logger.info(creditCardList.get(i));
+            LOGGER.info(creditCardList.get(i));
         }
     }
 

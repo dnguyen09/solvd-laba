@@ -3,9 +3,8 @@ package com.solvd.laba.lab2;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
 
-public class Transaction implements Iterable<Transaction> {
+public class Transaction {
     /*declare properties*/
     private double amount;
     private String type;
@@ -49,26 +48,5 @@ public class Transaction implements Iterable<Transaction> {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd - HH:mm:ss.SS");
         String formattedTime = time.format(formatter);
         return formattedTime + " - " + type + " - " + amount;
-    }
-
-    @Override
-    public Iterator<Transaction> iterator() {
-        return new TransactionIterator();
-    }
-
-    private class TransactionIterator implements Iterator<Transaction> {
-        private Transaction currentTransaction = Transaction.this;
-
-        @Override
-        public boolean hasNext() {
-            return currentTransaction != null;
-        }
-
-        @Override
-        public Transaction next() {
-            Transaction nextTransaction = currentTransaction;
-            currentTransaction = null;
-            return nextTransaction;
-        }
     }
 }

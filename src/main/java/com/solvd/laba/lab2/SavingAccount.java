@@ -1,17 +1,21 @@
 package com.solvd.laba.lab2;
 
 import com.solvd.laba.lab2.interfaces.InterestRate;
-import com.solvd.laba.lab2.linkedList.LinkedListCustom;
+import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
 
 public class SavingAccount extends Account implements InterestRate {
+    //Logger
+    private static final Logger LOGGER = LogManager.getLogger(SavingAccount.class);
+
     /*declare properties*/
     private double interestRate;
     private double minimumBalance;
 
     /*constructor*/
-
     public SavingAccount(int accountNumber, double balance, String accountType, Customer customer, double interestRate, double minimumBalance) {
         super(accountNumber, balance, accountType, customer);
         this.interestRate = interestRate;
@@ -58,10 +62,10 @@ public class SavingAccount extends Account implements InterestRate {
     //method printing saving account transaction list
     @Override
     public void printList() {
-        logger.info(String.format("%60s", "Transaction List of Saving account "));
+        LOGGER.info(String.format("%60s", "Transaction List of Saving account "));
         LinkedListCustom<Transaction> savingList = getTransactionList();
         for (int i = 0; i < savingList.getSize(); i++) {
-            logger.info(savingList.get(i));
+            LOGGER.info(savingList.get(i));
         }
     }
 
