@@ -1,12 +1,11 @@
 package com.solvd.laba.lab1;
 
-import com.solvd.laba.lab2.Main;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class UserInfo {
-    //logger
-    static Logger logger = LogManager.getLogger(Main.class);
+    //LOGGER
+    private static final Logger LOGGER = LogManager.getLogger(UserInfo.class);
 
     public static void main(String[] args) {
         //check if args array has argument
@@ -15,9 +14,9 @@ public class UserInfo {
             String name = args[0];
 
             //print out name
-            logger.info("Name: " + name);
+            LOGGER.info("Name: " + name);
         } else {
-            logger.info("Please include name");
+            LOGGER.info("Please include name");
         }
     }
 }

@@ -6,7 +6,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 
 public class SelectionSort {
-    static Logger logger = LogManager.getLogger(SelectionSort.class);
+    //logger
+    private static final Logger LOGGER = LogManager.getLogger(SelectionSort.class);
 
     public static void selectionSort(int[] arr) {
         //iterate over the array, outer loop
@@ -32,12 +33,12 @@ public class SelectionSort {
         int[] array = {6, 2, 1, 10, 15, 7, 6, 4};
 
         //print array before sorting
-        logger.info("Array: " + Arrays.toString(array));
+        LOGGER.info("Array: " + Arrays.toString(array));
 
         //call method selectionSort
         selectionSort(array);
 
         //print sorted array
-        logger.info("Sorted array: " + Arrays.toString(array));
+        LOGGER.info("Sorted array: " + Arrays.toString(array));
     }
 }

@@ -7,8 +7,9 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class CompareSortingTime {
-    //logger
-    static Logger logger = LogManager.getLogger(CompareSortingTime.class);
+    //LOGGER
+    private static final Logger LOGGER = LogManager.getLogger(CompareSortingTime.class);
+
 
     public static void insertionSort(int[] arr) {
         //iterate over the array from second element
@@ -53,8 +54,8 @@ public class CompareSortingTime {
         long endTime2 = System.currentTimeMillis();
 
         //Print the outputs
-        //logger.info(Arrays.toString(array));
-        logger.info("Insertion sort - Time duration: " + (endTime - startTime) + " milliseconds");
-        logger.info("Selection sort - Time duration: " + (endTime2 - startTime2) + " milliseconds");
+        //LOGGER.info(Arrays.toString(array));
+        LOGGER.info("Insertion sort - Time duration: " + (endTime - startTime) + " milliseconds");
+        LOGGER.info("Selection sort - Time duration: " + (endTime2 - startTime2) + " milliseconds");
     }
 }
