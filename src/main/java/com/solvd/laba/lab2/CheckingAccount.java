@@ -1,5 +1,6 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.enums.AccountType;
 import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,16 +15,16 @@ public class CheckingAccount extends Account {
     private double monthlyFee;
 
     /*constructors*/
-    public CheckingAccount(long accountNumber, String accountType, Customer cus, double monthlyFee, double balance) {
+    public CheckingAccount(long accountNumber, AccountType accountType, Customer cus, double monthlyFee, double balance) {
         super(accountNumber, balance, accountType, cus);
         this.monthlyFee = monthlyFee;
     }
 
-    public CheckingAccount(Account account, String accountType, double balance, double monthlyFee) {
+    public CheckingAccount(Account account, AccountType accountType, double balance, double monthlyFee) {
         this(account.getAccountNumber(), accountType, account.getCustomer(), monthlyFee, balance);
     }
 
-    public CheckingAccount(Account account, String accountType, double monthlyFee) {
+    public CheckingAccount(Account account, AccountType accountType, double monthlyFee) {
         super(account.getCustomer(), account.getBalance());
         this.setAccountType(accountType);
         this.setAccountNumber(generateNumber());
@@ -63,7 +64,7 @@ public class CheckingAccount extends Account {
         Random random = new Random();
         int randChecking = random.nextInt(100000) + 1000;
         //Concat String with lastAccNum to not get same number generated
-        String checkingAccNum = idChecking + String.valueOf(randChecking) + String.valueOf(lastAccNum);
+        String checkingAccNum = idChecking + randChecking + lastAccNum;
         lastAccNum++;
         return Long.parseLong(checkingAccNum);
     }

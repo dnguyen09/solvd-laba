@@ -1,6 +1,9 @@
 package com.solvd.laba.lab2;
 
 
+import com.solvd.laba.lab2.enums.AccountType;
+import com.solvd.laba.lab2.enums.CardType;
+import com.solvd.laba.lab2.enums.TransactionType;
 import com.solvd.laba.lab2.exception.InsufficientBalanceException;
 import com.solvd.laba.lab2.interfaces.Payment;
 import com.solvd.laba.lab2.interfaces.PrintList;
@@ -17,19 +20,20 @@ public class Account extends AccountNumber implements PrintList, Payment {
     /*declare properties*/
     private long accountNumber;
     private double balance;
-    private String accountType;
+    private AccountType accountType;
+    private CardType cardType;
     private Customer customer;
     private LinkedListCustom<Transaction> transactionList;
 
     /*constructors*/
-    public Account(long accountNumber, double balance, String accountType, Customer customer) {
+    public Account(long accountNumber, double balance, AccountType accountType, Customer customer) {
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.accountType = accountType;
         this.customer = customer;
     }
 
-    public Account(long accountNumber, String accountType, Customer customer) {
+    public Account(long accountNumber, AccountType accountType, Customer customer) {
         this.accountNumber = accountNumber;
         this.accountType = accountType;
         this.customer = customer;
@@ -38,9 +42,15 @@ public class Account extends AccountNumber implements PrintList, Payment {
     public Account(Customer customer, double balance) {
         this.accountNumber = generateNumber();
         this.balance = balance;
-        this.accountType = "";
+        this.accountType = null;
         this.customer = customer;
         this.transactionList = new LinkedListCustom<>();
+    }
+
+    public Account(long accountNumber, CardType cardType, Customer customer) {
+        this.accountNumber = accountNumber;
+        this.cardType = cardType;
+        this.customer = customer;
     }
 
     /*getters and setters*/
@@ -60,11 +70,11 @@ public class Account extends AccountNumber implements PrintList, Payment {
         this.balance = balance;
     }
 
-    public String getAccountType() {
+    public AccountType getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(String accountType) {
+    public void setAccountType(AccountType accountType) {
         this.accountType = accountType;
     }
 
@@ -84,17 +94,25 @@ public class Account extends AccountNumber implements PrintList, Payment {
         this.transactionList = transactionList;
     }
 
+    public CardType getCardType() {
+        return cardType;
+    }
+
+    public void setCardType(CardType cardType) {
+        this.cardType = cardType;
+    }
+
     /*Methods*/
     public void deposit(double amount) {
         balance += amount;
-        transactionList.add(new Transaction(amount, "Deposit"));
-        LOGGER.info("Deposit " + amount + " successful to " + accountType);
+        transactionList.add(new Transaction(amount, TransactionType.DEPOSIT));
+        LOGGER.info("Deposit " + amount + " successful to " + getAccountType());
     }
 
     //overloading method deposit to transfer amount with type
-    public void deposit(double amount, String accountType) {
+    public void deposit(double amount, TransactionType transactionType) {
         balance += amount;
-        transactionList.add(new Transaction(amount, accountType));
+        transactionList.add(new Transaction(amount, transactionType));
     }
 
     public void withdrawal(double amount) {
@@ -102,19 +120,19 @@ public class Account extends AccountNumber implements PrintList, Payment {
             LOGGER.info("Withdrawal failed! the amount withdrawal excess balance");
         } else {
             balance -= amount;
-            transactionList.add(new Transaction(amount, "Withdraw"));
-            LOGGER.info("Withdrawal " + amount + " successful from " + accountType);
+            transactionList.add(new Transaction(amount, TransactionType.WITHDRAWAL));
+            LOGGER.info("Withdrawal " + amount + " successful from " + getAccountType());
         }
     }
 
     //overloading method withdrawal to withdraw account with type
-    public void withdrawal(double amount, String accountType) {
+    public void withdrawal(double amount, TransactionType transactionType) {
         try {
             if (amount > balance) {
                 throw new InsufficientBalanceException("Insufficient balance to withdraw! ");
             } else {
                 balance -= amount;
-                transactionList.add(new Transaction(amount, accountType));
+                transactionList.add(new Transaction(amount, transactionType));
             }
         } catch (InsufficientBalanceException e) {
             LOGGER.error(e.getMessage());
@@ -127,8 +145,8 @@ public class Account extends AccountNumber implements PrintList, Payment {
             LOGGER.info("Purchase failed! your account don't have enough balance for making purchase");
         } else {
             balance -= amount;
-            transactionList.add(new Transaction(amount, "Purchase"));
-            LOGGER.info("Purchase " + amount + " successful from " + accountType);
+            transactionList.add(new Transaction(amount, TransactionType.PURCHASE));
+            LOGGER.info("Purchase " + amount + " successful from " + getAccountType());
         }
     }
 
@@ -144,7 +162,6 @@ public class Account extends AccountNumber implements PrintList, Payment {
         }
     }
 
-    @Override
     public long generateNumber() {
         String idAccount = "1010";
         Random random = new Random();
@@ -153,5 +170,4 @@ public class Account extends AccountNumber implements PrintList, Payment {
         lastAccNum++;
         return Long.parseLong(accountNum);
     }
-
 }

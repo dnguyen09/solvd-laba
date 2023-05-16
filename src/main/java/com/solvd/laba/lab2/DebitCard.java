@@ -1,5 +1,7 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.enums.CardType;
+import com.solvd.laba.lab2.enums.TransactionType;
 import com.solvd.laba.lab2.exception.CVVException;
 import com.solvd.laba.lab2.interfaces.CardCreating;
 import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
@@ -22,17 +24,17 @@ public class DebitCard extends Account implements CardCreating {
     private int pin;
 
     /*constructor*/
-    public DebitCard(long accountNumber, String accountType, Customer customer, long debitCardNumb, String expirationDate, int cvv, int pin) {
-        super(accountNumber, accountType, customer);
+    public DebitCard(long accountNumber, CardType cardType, Customer customer, long debitCardNumb, String expirationDate, int cvv, int pin) {
+        super(accountNumber, cardType, customer);
         this.debitCardNumb = debitCardNumb;
         this.expirationDate = expirationDate;
         this.cvv = cvv;
         this.pin = pin;
     }
 
-    public DebitCard(Account account, String accountType, int pin) {
+    public DebitCard(Account account, CardType cardType, int pin) {
         super(account.getCustomer(), account.getBalance());
-        this.setAccountType(accountType);
+        this.setCardType(cardType);
         this.debitCardNumb = generateNumber();
         this.expirationDate = generateExpirationDate();
         this.cvv = generateCVV();
@@ -81,7 +83,7 @@ public class DebitCard extends Account implements CardCreating {
         Random random = new Random();
         int randDebit = random.nextInt(100000) + 1000;
         //Concat String with lastAccNum to not get same number generated
-        String DebitCardNum = idDebit + String.valueOf(randDebit) + String.valueOf(lastAccNum);
+        String DebitCardNum = idDebit + randDebit + lastAccNum;
         lastAccNum++;
         return Long.parseLong(DebitCardNum);
     }
@@ -117,6 +119,38 @@ public class DebitCard extends Account implements CardCreating {
         return cvv < 100 || cvv > 999;
     }
 
+    //override method withdrawal in Account class
+    @Override
+    public void withdrawal(double amount) {
+        if (amount > getBalance()) {
+            LOGGER.info("Withdrawal failed! the amount withdrawal excess balance");
+        } else {
+            setBalance(getBalance() - amount);
+            getTransactionList().add(new Transaction(amount, TransactionType.WITHDRAWAL));
+            LOGGER.info("Withdrawal " + amount + " successful from " + getCardType());
+        }
+    }
+
+    //override method deposit form Account class
+    @Override
+    public void deposit(double amount) {
+        setBalance(getBalance() + amount);
+        getTransactionList().add(new Transaction(amount, TransactionType.DEPOSIT));
+        LOGGER.info("Deposit " + amount + " successful to " + getCardType());
+    }
+
+    //override method makePurchase from Account class
+    @Override
+    public void makePurchase(double amount) {
+        if (amount > getBalance()) {
+            LOGGER.info("Purchase failed! your account don't have enough balance for making purchase");
+        } else {
+            setBalance(getBalance() - amount);
+            getTransactionList().add(new Transaction(amount, TransactionType.PURCHASE));
+            LOGGER.info("Purchase " + amount + " successful from " + getCardType());
+        }
+    }
+
     //method printing debit card transaction list
     @Override
     public void printList() {
@@ -134,5 +168,4 @@ public class DebitCard extends Account implements CardCreating {
                 "Expiration date : " + getExpirationDate() + "    " +
                 "CVV: " + getCvv() + " \n" + "Pin: " + getPin() + "\n");
     }
-
 }

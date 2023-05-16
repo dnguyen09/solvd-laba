@@ -1,5 +1,6 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.enums.AccountType;
 import com.solvd.laba.lab2.interfaces.InterestRate;
 import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
 import org.apache.logging.log4j.LogManager;
@@ -16,13 +17,13 @@ public class SavingAccount extends Account implements InterestRate {
     private double minimumBalance;
 
     /*constructor*/
-    public SavingAccount(int accountNumber, double balance, String accountType, Customer customer, double interestRate, double minimumBalance) {
+    public SavingAccount(int accountNumber, double balance, AccountType accountType, Customer customer, double interestRate, double minimumBalance) {
         super(accountNumber, balance, accountType, customer);
         this.interestRate = interestRate;
         this.minimumBalance = minimumBalance;
     }
 
-    public SavingAccount(Account account, String accountType, double minimumBalance) {
+    public SavingAccount(Account account, AccountType accountType, double minimumBalance) {
         super(account.getCustomer(), 0.0);
         this.setAccountType(accountType);
         this.setAccountNumber(generateNumber());
@@ -75,7 +76,7 @@ public class SavingAccount extends Account implements InterestRate {
         Random random = new Random();
         int randSaving = random.nextInt(100000) + 1000;
         //Concat String with lastAccNum to not get same number generated
-        String SavingAccNum = idSaving + String.valueOf(randSaving) + String.valueOf(lastAccNum);
+        String SavingAccNum = idSaving + randSaving + lastAccNum;
         lastAccNum++;
         return Long.parseLong(SavingAccNum);
     }

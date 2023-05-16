@@ -1,5 +1,7 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.enums.CardType;
+import com.solvd.laba.lab2.enums.TransactionType;
 import com.solvd.laba.lab2.exception.CVVException;
 import com.solvd.laba.lab2.interfaces.CardCreating;
 import com.solvd.laba.lab2.interfaces.InterestRate;
@@ -27,7 +29,7 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
 
     /*constructor*/
 
-    public CreditCard(long accountNumber, String accountType, Customer customer, int creditCardNum, double creditLimit, String expirationDate, int cvv, int pin) {
+    public CreditCard(long accountNumber, CardType accountType, Customer customer, int creditCardNum, double creditLimit, String expirationDate, int cvv, int pin) {
         super(accountNumber, accountType, customer);
         this.creditCardNum = creditCardNum;
         this.creditLimit = creditLimit;
@@ -36,9 +38,9 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
         this.pin = pin;
     }
 
-    public CreditCard(Account account, String accountType, int pin) {
+    public CreditCard(Account account, CardType cardType, int pin) {
         super(account.getCustomer(), 0);
-        this.setAccountType(accountType);
+        this.setCardType(cardType);
         this.creditCardNum = generateNumber();
         this.expirationDate = generateExpirationDate();
         this.creditLimit = 5000;
@@ -113,7 +115,7 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
         //generate number in range 1000 - 99999
         int randCredit = random.nextInt(100000) + 1000;
         //Concat String with lastAccNum to not get same number generated
-        String creditCardNum = idCredit + String.valueOf(randCredit) + String.valueOf(lastAccNum);
+        String creditCardNum = idCredit + randCredit + lastAccNum;
         lastAccNum++;
         return Long.parseLong(creditCardNum);
     }
@@ -190,6 +192,26 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
         return interestRate;
     }
 
+    //override method deposit form Account class
+    @Override
+    public void deposit(double amount) {
+        setBalance(getBalance() + amount);
+        getTransactionList().add(new Transaction(amount, TransactionType.DEPOSIT));
+        LOGGER.info("Deposit " + amount + " successful to " + getCardType());
+    }
+
+    //override method withdrawal in Account class
+    @Override
+    public void withdrawal(double amount) {
+        if (amount > getBalance()) {
+            LOGGER.info("Withdrawal failed! the amount withdrawal excess balance");
+        } else {
+            setBalance(getBalance() - amount);
+            getTransactionList().add(new Transaction(amount, TransactionType.WITHDRAWAL));
+            LOGGER.info("Withdrawal " + amount + " successful from " + getCardType());
+        }
+    }
+
     //method to calculate for minimum payment
     @Override
     public void makePurchase(double amount) {
@@ -198,8 +220,8 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
             outStandingBalance += amount;
             setBalance(outStandingBalance);
             LOGGER.info("Purchase successful");
-            getTransactionList().add(new Transaction(amount, "Purchase"));
-            LOGGER.info("Purchase " + amount + " successful from " + getAccountType());
+            getTransactionList().add(new Transaction(amount, TransactionType.PURCHASE));
+            LOGGER.info("Purchase " + amount + " successful from " + getCardType());
         } else {
             LOGGER.info("Purchase failed! the purchase amount excess credit limit on your card");
         }

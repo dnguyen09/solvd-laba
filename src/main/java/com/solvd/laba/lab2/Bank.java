@@ -1,5 +1,8 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.enums.AccountType;
+import com.solvd.laba.lab2.enums.CardType;
+import com.solvd.laba.lab2.enums.TransactionType;
 import com.solvd.laba.lab2.exception.CreditCheckException;
 import com.solvd.laba.lab2.exception.WithdrawalException;
 import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
@@ -7,6 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 final public class Bank {
     //Logger
@@ -36,8 +42,6 @@ final public class Bank {
     public String getName() {
         return name;
     }
-
-    ;
 
     public String getLocation() {
         return location;
@@ -76,25 +80,25 @@ final public class Bank {
     //method create checking account for customer
     public CheckingAccount createCheckingAccount(Account account) {
         LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " open checking account successful");
-        return new CheckingAccount(account, "Checking account", 12);
+        return new CheckingAccount(account, AccountType.CHECKING, 12);
     }
 
     //method create saving account for customer
     public SavingAccount createSavingAccount(Account account) {
         LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " open saving account successful");
-        return new SavingAccount(account, "Saving account", 10);
+        return new SavingAccount(account, AccountType.SAVING, 10);
     }
 
     //method creating debit card
     public DebitCard createDebitCard(Account account) {
         LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " has created a debit card");
-        return new DebitCard(account, "Debit card", 1990);
+        return new DebitCard(account, CardType.DEBIT, 1990);
     }
 
     //method creating credit card
     public CreditCard createCreditCard(Account account) {
         LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " has created a credit card");
-        return new CreditCard(account, "Credit card", 1021);
+        return new CreditCard(account, CardType.CREDIT, 1021);
     }
 
     //method check monthly service fee for checking account
@@ -175,8 +179,8 @@ final public class Bank {
 
     //method transfer money from account to account
     public void transferMoney(CheckingAccount fromAccount, Account toAccount, double amount) {
-        fromAccount.withdrawal(amount, "Transfer to account " + toAccount.getAccountNumber());
-        toAccount.deposit(amount, "Transfer from account " + fromAccount.getAccountNumber());
+        fromAccount.withdrawal(amount, TransactionType.TRANSFER);
+        toAccount.deposit(amount, TransactionType.TRANSFER);
         LOGGER.info("Transfer " + amount + " from account " + fromAccount.getAccountNumber() + " to account " + toAccount.getAccountNumber() + " successful");
     }
 
@@ -202,4 +206,55 @@ final public class Bank {
     public String checkBalance(Account acc) {
         return "Your balance: " + acc.getBalance() + "\n";
     }
+
+    /*----Lambda----*/
+    //method using lambda function Predicate to get customers based on requirement
+    public List<Customer> getCustomerWithFilter(Predicate<Customer> filterCustomer) {
+        List<Customer> customerFilterList = new ArrayList<>();
+        for (Customer customer : customerList) {
+            if (filterCustomer.test(customer)) {
+                customerFilterList.add(customer);
+            }
+        }
+        return customerFilterList;
+    }
+
+    //print list of customer credit score with lambda based on range
+    public void printCustomerCredScoreInRange(int start, int end) {
+        LOGGER.info(getCustomerWithFilter(customer -> customer.getCreditScore() > start
+                && customer.getCreditScore() < end));
+    }
+
+    /*----Stream----*/
+    //Using stream to print list of customer credit score within range
+    public void printStreamCusCredScoreRange(int startCred, int endCred) {
+        List<String> streamCusCred = getCustomerList().stream()
+                .filter((Customer customer) -> customer.getCreditScore() > startCred
+                        && customer.getCreditScore() < endCred)
+                .map(customer -> "Name: " + customer.getCustomerName() + " - Credit Score: " + customer.getCreditScore())
+                .collect(Collectors.toList());
+        LOGGER.info(streamCusCred);
+    }
+
+    //using stream to print list of customer age within range
+    public void printStreamCusWithAge(int startAge, int endAge) {
+        List<String> cusAge = getCustomerList().stream()
+                .filter(customer -> customer.getAge() > startAge && customer.getAge() < endAge)
+                .map(customer -> "Name: " + customer.getCustomerName() + " - Age: " + customer.getAge())
+                .collect(Collectors.toList());
+
+        cusAge.forEach(customer -> LOGGER.info(customer));
+    }
+
+    //using stream to print average credit score of certain customers age
+    public void printAverageCredWithAge(int startAge, int endAge) {
+        double average = getCustomerList().stream()
+                .filter(customer -> customer.getAge() > startAge && customer.getAge() < endAge)
+                .mapToInt(Customer::getCreditScore)
+                .average()
+                .orElse(0);
+
+        LOGGER.info("Average Credit Score: " + average);
+    }
+
 }

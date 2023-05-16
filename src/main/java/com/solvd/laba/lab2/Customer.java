@@ -3,7 +3,6 @@ package com.solvd.laba.lab2;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 public class Customer {
     /*declare properties*/
@@ -21,7 +20,7 @@ public class Customer {
     }
 
     public Customer() {
-        this("","",0);
+        this("", "", 0);
     }
 
     /*Getters and setters*/
@@ -56,7 +55,7 @@ public class Customer {
 
     @Override
     public String toString() {
-        return "Name: " + customerName + "\nAge: " + getAge() + "\nCredit Score: " + creditScore + "\n";
+        return "Name: " + customerName + " - Age: " + getAge() + " - Credit Score: " + creditScore;
     }
 
 }

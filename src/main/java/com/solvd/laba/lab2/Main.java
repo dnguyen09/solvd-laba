@@ -15,6 +15,11 @@ public class Main {
         Bank bank = new Bank("Chase", "Irvine, WY");
         Customer cus1 = new Customer("Bryce", "12-15-1991", 570);
         Customer cus2 = new Customer("Armando", "11-22-1979", 660);
+        Customer cus3 = new Customer("Amad", "03-19-1972", 880);
+        Customer cus4 = new Customer("Seanna", "05-29-1984", 732);
+        Customer cus5 = new Customer("Cyrus", "09-19-1993", 1000);
+        Customer cus6 = new Customer("Diago", "02-08-2002", 600);
+
 
         try {
             String result1 = bank.makeCreditCheck(cus1);
@@ -30,9 +35,14 @@ public class Main {
         LOGGER.info("Account number: " + bank.getAccountNumber(account1) + "\n");
         Account account2 = bank.createAccount(cus2, 4000);
         LOGGER.info("Account number: " + bank.getAccountNumber(account2));
-        System.out.println();
+        bank.createAccount(cus3, 2000);
+        bank.createAccount(cus4, 5000);
+        bank.createAccount(cus5, 12000);
+        bank.createAccount(cus6, 2000);
+
 
         //create checking account from account
+        System.out.println("\n=======Checking Account=======");
         CheckingAccount check1 = bank.createCheckingAccount(account1);
         LOGGER.info("Checking number: " + bank.getAccountNumber(check1));
         CheckingAccount check2 = bank.createCheckingAccount(account2);
@@ -51,6 +61,7 @@ public class Main {
         System.out.println();
 
         //create saving account from account
+        System.out.println("\n=======Saving Account=======");
         SavingAccount save1 = bank.createSavingAccount(account1);
         LOGGER.info("Saving number: " + bank.getAccountNumber(save1));
         LOGGER.info(bank.checkBalance(save1));
@@ -58,9 +69,9 @@ public class Main {
         bank.deposit(save1, 2000);
         LOGGER.info(bank.checkBalance(save1));
         bank.checkInterestRate(save1);
-        System.out.println();
 
         //create debit card from checking account
+        System.out.println("\n=======Debit Card=======");
         DebitCard debitCard1 = bank.createDebitCard(check1);
         LOGGER.info(bank.getInfo(debitCard1));
         LOGGER.info(bank.checkBalance(debitCard1));
@@ -70,9 +81,9 @@ public class Main {
         bank.deposit(debitCard1, 1000);
         LOGGER.info(bank.checkBalance(debitCard1));
         bank.printList(debitCard1);
-        System.out.println();
 
         //create credit card from account
+        System.out.println("\n=======Credit Card=======");
         CreditCard creditCard1 = bank.createCreditCard(account1);
         LOGGER.info(bank.getInfo(creditCard1));
         LOGGER.info(bank.checkBalance(creditCard1));
@@ -86,5 +97,23 @@ public class Main {
         bank.payMinPayment(creditCard1, check1);
         bank.checkMinPayment(creditCard1);
         bank.printList(creditCard1);
+
+        //lambda
+        System.out.println("\n=======Lambda=======");
+
+        //print customers credit score within range
+        bank.printCustomerCredScoreInRange(500, 700);
+
+        //Stream
+        System.out.println("\n=======Stream=======");
+
+        //print customer credit score within range using stream
+        bank.printStreamCusCredScoreRange(400, 1200);
+
+        //print customer age within range using stream
+        bank.printStreamCusWithAge(20, 30);
+
+        //print customer average credit score of certain age
+        bank.printAverageCredWithAge(30, 50);
     }
 }
