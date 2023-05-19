@@ -1,9 +1,11 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.Lambdas.InterestEarning;
 import com.solvd.laba.lab2.enums.AccountType;
 import com.solvd.laba.lab2.enums.CardType;
 import com.solvd.laba.lab2.enums.TransactionType;
 import com.solvd.laba.lab2.exception.CreditCheckException;
+import com.solvd.laba.lab2.exception.DepositException;
 import com.solvd.laba.lab2.exception.WithdrawalException;
 import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
 import org.apache.logging.log4j.LogManager;
@@ -86,7 +88,7 @@ final public class Bank {
     //method create saving account for customer
     public SavingAccount createSavingAccount(Account account) {
         LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " open saving account successful");
-        return new SavingAccount(account, AccountType.SAVING, 10);
+        return new SavingAccount(account, AccountType.SAVING, 10, 0.15);
     }
 
     //method creating debit card
@@ -148,8 +150,12 @@ final public class Bank {
         } else {
             LOGGER.info("Checking your interest rate...");
             LOGGER.info("Your interest rate: " + acc.getInterestRate());
-            LOGGER.info("Your interest earned " + acc.getInterestEarned() + "\n");
         }
+    }
+
+    //calculating amount earned after a specified year for saving account
+    public void calculator(InterestEarning<Double> amountEarned) {
+        amountEarned.calculate();
     }
 
     //method get card information
@@ -158,6 +164,9 @@ final public class Bank {
     }
 
     public void deposit(Account acc, double amount) {
+        if (acc instanceof CreditCard) {
+            throw new DepositException("Cannot deposit to credit card");
+        }
         acc.deposit(amount);
     }
 
@@ -179,9 +188,26 @@ final public class Bank {
 
     //method transfer money from account to account
     public void transferMoney(CheckingAccount fromAccount, Account toAccount, double amount) {
-        fromAccount.withdrawal(amount, TransactionType.TRANSFER);
-        toAccount.deposit(amount, TransactionType.TRANSFER);
-        LOGGER.info("Transfer " + amount + " from account " + fromAccount.getAccountNumber() + " to account " + toAccount.getAccountNumber() + " successful");
+        try {
+            // Withdraw from the source account
+            fromAccount.withdrawal(amount, TransactionType.TRANSFER);
+
+            // If withdrawal is successful, deposit into the destination account
+            toAccount.deposit(amount, TransactionType.TRANSFER);
+
+            LOGGER.info("Transfer of " + amount + " from account " + fromAccount.getAccountNumber() +
+                    " to account " + toAccount.getAccountNumber() + " successful");
+        } catch (WithdrawalException withdrawalException) {
+            LOGGER.error("Withdrawal failed: " + withdrawalException.getMessage());
+            // Compensate for the failed withdrawal by reversing the successful deposit
+            toAccount.withdrawal(amount, TransactionType.CANCEL);
+            LOGGER.info("Cancel of " + amount + " from account " + toAccount.getAccountNumber() + " successful");
+        } catch (DepositException e) {
+            LOGGER.error("Deposit failed: " + e.getMessage());
+            // cancel for the failed deposit by adding back amount to source account
+            fromAccount.deposit(amount, TransactionType.CANCEL);
+            LOGGER.info("Cancel of " + amount + " from account " + toAccount.getAccountNumber() + " successful");
+        }
     }
 
     //method print list of transaction from account

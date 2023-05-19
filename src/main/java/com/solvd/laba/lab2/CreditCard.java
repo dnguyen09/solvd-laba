@@ -26,22 +26,14 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
     private int pin;
     private double interestRate;
     private double minimumPayment;
+    private CardType cardType;
 
     /*constructor*/
 
-    public CreditCard(long accountNumber, CardType accountType, Customer customer, int creditCardNum, double creditLimit, String expirationDate, int cvv, int pin) {
-        super(accountNumber, accountType, customer);
-        this.creditCardNum = creditCardNum;
-        this.creditLimit = creditLimit;
-        this.expirationDate = expirationDate;
-        this.cvv = cvv;
-        this.pin = pin;
-    }
-
     public CreditCard(Account account, CardType cardType, int pin) {
         super(account.getCustomer(), 0);
-        this.setCardType(cardType);
-        this.creditCardNum = generateNumber();
+        this.cardType = cardType;
+        this.creditCardNum = generateNumber("6677");
         this.expirationDate = generateExpirationDate();
         this.creditLimit = 5000;
         this.cvv = generateCVV();
@@ -106,20 +98,15 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
         this.minimumPayment = minimumPayment;
     }
 
-    /*methods*/
-    //method to generate credit card number
-    @Override
-    public long generateNumber() {
-        String idCredit = "6677";
-        Random random = new Random();
-        //generate number in range 1000 - 99999
-        int randCredit = random.nextInt(100000) + 1000;
-        //Concat String with lastAccNum to not get same number generated
-        String creditCardNum = idCredit + randCredit + lastAccNum;
-        lastAccNum++;
-        return Long.parseLong(creditCardNum);
+    public CardType getCardType() {
+        return cardType;
     }
 
+    public void setCardType(CardType cardType) {
+        this.cardType = cardType;
+    }
+
+    /*methods*/
     //method to create expiration date
     public String generateExpirationDate() {
         Calendar dateNow = Calendar.getInstance();
@@ -130,20 +117,15 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
     }
 
     //method to create CVV
-    public int generateCVV() {
-        try {
-            Random random = new Random();
-            int cvv = random.nextInt(900) + 100;
+    public int generateCVV() throws CVVException {
+        Random random = new Random();
+        int cvv = random.nextInt(900) + 100;
 
-            //check if cvv follow format
-            if (isValidCVV(cvv)) {
-                throw new CVVException("Invalid cvv: " + cvv);
-            }
-            return cvv;
-        } catch (CVVException e) {
-            LOGGER.info("Error: " + e.getMessage());
-            return -1;
+        //check if cvv follow format
+        if (isValidCVV(cvv)) {
+            throw new CVVException("Invalid cvv: " + cvv);
         }
+        return cvv;
     }
 
     //method to check if a CVV is valid
@@ -174,10 +156,10 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
         minimumPayment = 0;
     }
 
-    //method checking if min payment has been paid
-    public boolean hasMinPayment() {
-        return minimumPayment == 0;
-    }
+//    //method checking if min payment has been paid
+//    public boolean hasMinPayment() {
+//        return minimumPayment == 0;
+//    }
 
     //method calculating interest rate for late min payment
     @Override
@@ -197,7 +179,7 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
     public void deposit(double amount) {
         setBalance(getBalance() + amount);
         getTransactionList().add(new Transaction(amount, TransactionType.DEPOSIT));
-        LOGGER.info("Deposit " + amount + " successful to " + getCardType());
+        LOGGER.info("Deposit " + amount + " successful to " + cardType.getName());
     }
 
     //override method withdrawal in Account class
@@ -208,7 +190,7 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
         } else {
             setBalance(getBalance() - amount);
             getTransactionList().add(new Transaction(amount, TransactionType.WITHDRAWAL));
-            LOGGER.info("Withdrawal " + amount + " successful from " + getCardType());
+            LOGGER.info("Withdrawal " + amount + " successful from " + cardType.getName());
         }
     }
 
@@ -221,7 +203,7 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
             setBalance(outStandingBalance);
             LOGGER.info("Purchase successful");
             getTransactionList().add(new Transaction(amount, TransactionType.PURCHASE));
-            LOGGER.info("Purchase " + amount + " successful from " + getCardType());
+            LOGGER.info("Purchase " + amount + " successful from " + cardType.getName());
         } else {
             LOGGER.info("Purchase failed! the purchase amount excess credit limit on your card");
         }
@@ -245,5 +227,4 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
                 "CVV: " + getCvv() + " \n" + "Pin: " + getPin() + "\n" +
                 "Credit limit: " + getCreditLimit() + "\n");
     }
-
 }

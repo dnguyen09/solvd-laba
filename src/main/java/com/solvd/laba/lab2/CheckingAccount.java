@@ -5,8 +5,6 @@ import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Random;
-
 public class CheckingAccount extends Account {
     //Logger
     private static final Logger LOGGER = LogManager.getLogger(CheckingAccount.class);
@@ -27,7 +25,7 @@ public class CheckingAccount extends Account {
     public CheckingAccount(Account account, AccountType accountType, double monthlyFee) {
         super(account.getCustomer(), account.getBalance());
         this.setAccountType(accountType);
-        this.setAccountNumber(generateNumber());
+        this.setAccountNumber(generateNumber("1213"));
         this.monthlyFee = monthlyFee;
     }
 
@@ -58,14 +56,14 @@ public class CheckingAccount extends Account {
         }
     }
 
-    @Override
-    public long generateNumber() {
-        String idChecking = "1213";
-        Random random = new Random();
-        int randChecking = random.nextInt(100000) + 1000;
-        //Concat String with lastAccNum to not get same number generated
-        String checkingAccNum = idChecking + randChecking + lastAccNum;
-        lastAccNum++;
-        return Long.parseLong(checkingAccNum);
-    }
+//    @Override
+//    public long generateNumber() {
+//        String idChecking = "1213";
+//        Random random = new Random();
+//        int randChecking = random.nextInt(100000) + 1000;
+//        //Concat String with lastAccNum to not get same number generated
+//        String checkingAccNum = idChecking + randChecking + AccountNumber.lastAccNum;
+//        AccountNumber.lastAccNum++;
+//        return Long.parseLong(checkingAccNum);
+//    }
 }

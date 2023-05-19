@@ -69,6 +69,14 @@ public class Main {
         bank.deposit(save1, 2000);
         LOGGER.info(bank.checkBalance(save1));
         bank.checkInterestRate(save1);
+        bank.calculator(() -> {
+            double interestRate = 0.15;
+            int year = 1;
+            double result = save1.getBalance() * (interestRate / 100) * year + save1.getBalance();
+            LOGGER.info("Based on your interest rate: {}", interestRate);
+            LOGGER.info("Your balance after {} year(s) is {}", year, result);
+            return result;
+        });
 
         //create debit card from checking account
         System.out.println("\n=======Debit Card=======");

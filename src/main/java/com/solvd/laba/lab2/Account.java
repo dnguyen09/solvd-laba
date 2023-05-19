@@ -1,8 +1,8 @@
 package com.solvd.laba.lab2;
 
 
+import com.solvd.laba.lab2.Lambdas.RandGenerate;
 import com.solvd.laba.lab2.enums.AccountType;
-import com.solvd.laba.lab2.enums.CardType;
 import com.solvd.laba.lab2.enums.TransactionType;
 import com.solvd.laba.lab2.exception.InsufficientBalanceException;
 import com.solvd.laba.lab2.interfaces.Payment;
@@ -12,8 +12,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Random;
+import java.util.stream.Stream;
 
-public class Account extends AccountNumber implements PrintList, Payment {
+public class Account implements PrintList, Payment {
     //LOGGER
     private static final Logger LOGGER = LogManager.getLogger(Account.class);
 
@@ -21,7 +22,6 @@ public class Account extends AccountNumber implements PrintList, Payment {
     private long accountNumber;
     private double balance;
     private AccountType accountType;
-    private CardType cardType;
     private Customer customer;
     private LinkedListCustom<Transaction> transactionList;
 
@@ -40,17 +40,11 @@ public class Account extends AccountNumber implements PrintList, Payment {
     }
 
     public Account(Customer customer, double balance) {
-        this.accountNumber = generateNumber();
+        this.accountNumber = generateNumber("1010");
         this.balance = balance;
         this.accountType = null;
         this.customer = customer;
         this.transactionList = new LinkedListCustom<>();
-    }
-
-    public Account(long accountNumber, CardType cardType, Customer customer) {
-        this.accountNumber = accountNumber;
-        this.cardType = cardType;
-        this.customer = customer;
     }
 
     /*getters and setters*/
@@ -94,19 +88,11 @@ public class Account extends AccountNumber implements PrintList, Payment {
         this.transactionList = transactionList;
     }
 
-    public CardType getCardType() {
-        return cardType;
-    }
-
-    public void setCardType(CardType cardType) {
-        this.cardType = cardType;
-    }
-
     /*Methods*/
     public void deposit(double amount) {
         balance += amount;
         transactionList.add(new Transaction(amount, TransactionType.DEPOSIT));
-        LOGGER.info("Deposit " + amount + " successful to " + getAccountType());
+        LOGGER.info("Deposit " + amount + " successful to " + accountType);
     }
 
     //overloading method deposit to transfer amount with type
@@ -121,7 +107,7 @@ public class Account extends AccountNumber implements PrintList, Payment {
         } else {
             balance -= amount;
             transactionList.add(new Transaction(amount, TransactionType.WITHDRAWAL));
-            LOGGER.info("Withdrawal " + amount + " successful from " + getAccountType());
+            LOGGER.info("Withdrawal " + amount + " successful from " + accountType);
         }
     }
 
@@ -146,28 +132,35 @@ public class Account extends AccountNumber implements PrintList, Payment {
         } else {
             balance -= amount;
             transactionList.add(new Transaction(amount, TransactionType.PURCHASE));
-            LOGGER.info("Purchase " + amount + " successful from " + getAccountType());
+            LOGGER.info("Purchase " + amount + " successful from " + accountType);
         }
-    }
-
-    //static block
-    static {
-        lastAccNum = 0;
     }
 
     //method print list of transaction
     public void printList() {
-        for (int i = 0; i < transactionList.getSize(); i++) {
-            LOGGER.info(transactionList.get(i));
-        }
+        Stream.of(transactionList).forEach(LOGGER::info);
     }
 
-    public long generateNumber() {
-        String idAccount = "1010";
-        Random random = new Random();
-        int randAccNum = random.nextInt(100000) + 1000;    //generate  integer (1000 - 99999)
-        String accountNum = idAccount + String.valueOf(randAccNum) + String.valueOf(lastAccNum);
-        lastAccNum++;
+    public long IdAccount(String id, RandGenerate<Integer> rand) {
+        String accountNum = id + rand.randNumber() + AccountNumber.lastAccNum;
+        AccountNumber.lastAccNum++;
         return Long.parseLong(accountNum);
+    }
+
+    public long generateNumber(String id) {
+        return IdAccount(id, () -> {
+            Random rand = new Random();
+            return rand.nextInt(100000) + 1000;
+        });
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "accountNumber=" + accountNumber +
+                ", balance=" + balance +
+                ", accountType=" + accountType +
+                ", customer=" + customer +
+                '}';
     }
 }

@@ -1,14 +1,12 @@
 package com.solvd.laba.lab2;
 
 import com.solvd.laba.lab2.enums.AccountType;
-import com.solvd.laba.lab2.interfaces.InterestRate;
 import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Random;
 
-public class SavingAccount extends Account implements InterestRate {
+public class SavingAccount extends Account {
     //Logger
     private static final Logger LOGGER = LogManager.getLogger(SavingAccount.class);
 
@@ -23,11 +21,11 @@ public class SavingAccount extends Account implements InterestRate {
         this.minimumBalance = minimumBalance;
     }
 
-    public SavingAccount(Account account, AccountType accountType, double minimumBalance) {
+    public SavingAccount(Account account, AccountType accountType, double minimumBalance, double interestRate) {
         super(account.getCustomer(), 0.0);
         this.setAccountType(accountType);
-        this.setAccountNumber(generateNumber());
-        this.interestRate = calculateInterestRate();
+        this.setAccountNumber(generateNumber("1314"));
+        this.interestRate = interestRate;
         this.minimumBalance = minimumBalance;
     }
 
@@ -49,17 +47,6 @@ public class SavingAccount extends Account implements InterestRate {
     }
 
     /*methods*/
-    //method return the amount get based on interest rate
-    public double getInterestEarned() {
-        return this.getBalance() * (interestRate / 100);
-    }
-
-    //Interest rate for saving account
-    @Override
-    public double calculateInterestRate() {
-        return 0.15;
-    }
-
     //method printing saving account transaction list
     @Override
     public void printList() {
@@ -68,16 +55,5 @@ public class SavingAccount extends Account implements InterestRate {
         for (int i = 0; i < savingList.getSize(); i++) {
             LOGGER.info(savingList.get(i));
         }
-    }
-
-    @Override
-    public long generateNumber() {
-        String idSaving = "1314";
-        Random random = new Random();
-        int randSaving = random.nextInt(100000) + 1000;
-        //Concat String with lastAccNum to not get same number generated
-        String SavingAccNum = idSaving + randSaving + lastAccNum;
-        lastAccNum++;
-        return Long.parseLong(SavingAccNum);
     }
 }

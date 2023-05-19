@@ -22,20 +22,14 @@ public class DebitCard extends Account implements CardCreating {
     private String expirationDate;
     private int cvv;
     private int pin;
+    private CardType cardType;
 
     /*constructor*/
-    public DebitCard(long accountNumber, CardType cardType, Customer customer, long debitCardNumb, String expirationDate, int cvv, int pin) {
-        super(accountNumber, cardType, customer);
-        this.debitCardNumb = debitCardNumb;
-        this.expirationDate = expirationDate;
-        this.cvv = cvv;
-        this.pin = pin;
-    }
 
     public DebitCard(Account account, CardType cardType, int pin) {
         super(account.getCustomer(), account.getBalance());
-        this.setCardType(cardType);
-        this.debitCardNumb = generateNumber();
+        this.cardType = cardType;
+        this.debitCardNumb = generateNumber("6677");
         this.expirationDate = generateExpirationDate();
         this.cvv = generateCVV();
         this.pin = pin;
@@ -75,19 +69,15 @@ public class DebitCard extends Account implements CardCreating {
         this.expirationDate = expirationDate;
     }
 
-    /*methods*/
-    //method to generate debit card number
-    @Override
-    public long generateNumber() {
-        String idDebit = "6677";
-        Random random = new Random();
-        int randDebit = random.nextInt(100000) + 1000;
-        //Concat String with lastAccNum to not get same number generated
-        String DebitCardNum = idDebit + randDebit + lastAccNum;
-        lastAccNum++;
-        return Long.parseLong(DebitCardNum);
+    public CardType getCardType() {
+        return cardType;
     }
 
+    public void setCardType(CardType cardType) {
+        this.cardType = cardType;
+    }
+
+    /*methods*/
     //method to create expiration date
     public String generateExpirationDate() {
         Calendar dateNow = Calendar.getInstance();
@@ -127,7 +117,7 @@ public class DebitCard extends Account implements CardCreating {
         } else {
             setBalance(getBalance() - amount);
             getTransactionList().add(new Transaction(amount, TransactionType.WITHDRAWAL));
-            LOGGER.info("Withdrawal " + amount + " successful from " + getCardType());
+            LOGGER.info("Withdrawal " + amount + " successful from " + cardType.getName());
         }
     }
 
@@ -136,7 +126,7 @@ public class DebitCard extends Account implements CardCreating {
     public void deposit(double amount) {
         setBalance(getBalance() + amount);
         getTransactionList().add(new Transaction(amount, TransactionType.DEPOSIT));
-        LOGGER.info("Deposit " + amount + " successful to " + getCardType());
+        LOGGER.info("Deposit " + amount + " successful to " + cardType.getName());
     }
 
     //override method makePurchase from Account class
@@ -147,7 +137,7 @@ public class DebitCard extends Account implements CardCreating {
         } else {
             setBalance(getBalance() - amount);
             getTransactionList().add(new Transaction(amount, TransactionType.PURCHASE));
-            LOGGER.info("Purchase " + amount + " successful from " + getCardType());
+            LOGGER.info("Purchase " + amount + " successful from " + cardType.getName());
         }
     }
 
