@@ -56,4 +56,11 @@ public class SavingAccount extends Account {
             LOGGER.info(savingList.get(i));
         }
     }
+
+    @Override
+    public String toString() {
+        return "SavingAccount{" +
+                "name=" + getCustomer().getCustomerName() +
+                '}';
+    }
 }

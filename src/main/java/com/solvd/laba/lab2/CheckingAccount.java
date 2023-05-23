@@ -56,14 +56,10 @@ public class CheckingAccount extends Account {
         }
     }
 
-//    @Override
-//    public long generateNumber() {
-//        String idChecking = "1213";
-//        Random random = new Random();
-//        int randChecking = random.nextInt(100000) + 1000;
-//        //Concat String with lastAccNum to not get same number generated
-//        String checkingAccNum = idChecking + randChecking + AccountNumber.lastAccNum;
-//        AccountNumber.lastAccNum++;
-//        return Long.parseLong(checkingAccNum);
-//    }
+    @Override
+    public String toString() {
+        return "CheckingAccount{" +
+                "name=" + getCustomer().getCustomerName() +
+                '}';
+    }
 }

@@ -1,5 +1,6 @@
 package com.solvd.laba.lab2;
 
+import com.solvd.laba.lab2.Lambdas.AccountFilter;
 import com.solvd.laba.lab2.Lambdas.InterestEarning;
 import com.solvd.laba.lab2.enums.AccountType;
 import com.solvd.laba.lab2.enums.CardType;
@@ -24,12 +25,14 @@ final public class Bank {
     private String name;
     private String location;
     private final ArrayList<Customer> customerList;
+    private final List<Account> accountList;
 
     /*constructor*/
     public Bank(String name, String location) {
         this.name = name;
         this.location = location;
         this.customerList = new ArrayList<>();
+        this.accountList = new ArrayList<>();
     }
 
     public Bank() {
@@ -53,12 +56,19 @@ final public class Bank {
         this.location = location;
     }
 
-    public ArrayList<Customer> getCustomerList() {
+    public ArrayList<?> getCustomerList() {
         return customerList;
     }
 
-    /*methods*/
+    public LinkedListCustom<Transaction> getTransactionsHistory(Account account) {
+        return account.getTransactionList();
+    }
 
+    public List<Account> getAccountList() {
+        return accountList;
+    }
+
+    /*methods*/
     //method to print message if customer is qualified
     public String makeCreditCheck(Customer customer) throws CreditCheckException {
         String qualificationStatus = CreditCheck.isQualifyAcc(customer);
@@ -82,25 +92,33 @@ final public class Bank {
     //method create checking account for customer
     public CheckingAccount createCheckingAccount(Account account) {
         LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " open checking account successful");
-        return new CheckingAccount(account, AccountType.CHECKING, 12);
+        CheckingAccount checking = new CheckingAccount(account, AccountType.CHECKING, 12);
+        accountList.add(checking);
+        return checking;
     }
 
     //method create saving account for customer
     public SavingAccount createSavingAccount(Account account) {
         LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " open saving account successful");
-        return new SavingAccount(account, AccountType.SAVING, 10, 0.15);
+        SavingAccount saving = new SavingAccount(account, AccountType.SAVING, 10, 0.15);
+        accountList.add(saving);
+        return saving;
     }
 
     //method creating debit card
     public DebitCard createDebitCard(Account account) {
         LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " has created a debit card");
-        return new DebitCard(account, CardType.DEBIT, 1990);
+        DebitCard debit = new DebitCard(account, CardType.DEBIT, 1990);
+        accountList.add(debit);
+        return debit;
     }
 
     //method creating credit card
     public CreditCard createCreditCard(Account account) {
         LOGGER.info("Customer " + account.getCustomer().getCustomerName() + " has created a credit card");
-        return new CreditCard(account, CardType.CREDIT, 1021);
+        CreditCard credit = new CreditCard(account, CardType.CREDIT, 1021);
+        accountList.add(credit);
+        return credit;
     }
 
     //method check monthly service fee for checking account
@@ -154,8 +172,10 @@ final public class Bank {
     }
 
     //calculating amount earned after a specified year for saving account
-    public void calculator(InterestEarning<Double> amountEarned) {
-        amountEarned.calculate();
+    public void calculator(double interestRate, int numOfYear, InterestEarning<Double> amountEarned) {
+        double result = amountEarned.calculate(interestRate, numOfYear);
+        LOGGER.info("Based on your interest rate: {}", interestRate);
+        LOGGER.info("Your balance after {} year(s) is {}", numOfYear, result);
     }
 
     //method get card information
@@ -199,15 +219,28 @@ final public class Bank {
                     " to account " + toAccount.getAccountNumber() + " successful");
         } catch (WithdrawalException withdrawalException) {
             LOGGER.error("Withdrawal failed: " + withdrawalException.getMessage());
+
             // Compensate for the failed withdrawal by reversing the successful deposit
             toAccount.withdrawal(amount, TransactionType.CANCEL);
             LOGGER.info("Cancel of " + amount + " from account " + toAccount.getAccountNumber() + " successful");
         } catch (DepositException e) {
             LOGGER.error("Deposit failed: " + e.getMessage());
+
             // cancel for the failed deposit by adding back amount to source account
             fromAccount.deposit(amount, TransactionType.CANCEL);
             LOGGER.info("Cancel of " + amount + " from account " + toAccount.getAccountNumber() + " successful");
         }
+    }
+
+    //method print list of account
+    public List<Account> printFilterAccount(AccountFilter<Account> customFilter) {
+        List<Account> accountFilterList = new ArrayList<>();
+        for (Account account : this.accountList) {
+            if (customFilter.check(account)) {
+                accountFilterList.add(account);
+            }
+        }
+        return accountFilterList;
     }
 
     //method print list of transaction from account
@@ -215,16 +248,12 @@ final public class Bank {
         account.printList();
     }
 
-    //method to get transaction history of account
-    public LinkedListCustom<Transaction> getTransactionsHistory(Account account) {
-        return account.getTransactionList();
-    }
-
     //method to get account number from account
     public long getAccountNumber(Account acc) {
         return acc.getAccountNumber();
     }
 
+    //method check balance of credit card
     public String checkBalance(CreditCard acc) {
         return "Your Outstanding balance: " + acc.getBalance() + "\n";
     }
@@ -254,7 +283,7 @@ final public class Bank {
     /*----Stream----*/
     //Using stream to print list of customer credit score within range
     public void printStreamCusCredScoreRange(int startCred, int endCred) {
-        List<String> streamCusCred = getCustomerList().stream()
+        List<String> streamCusCred = customerList.stream()
                 .filter((Customer customer) -> customer.getCreditScore() > startCred
                         && customer.getCreditScore() < endCred)
                 .map(customer -> "Name: " + customer.getCustomerName() + " - Credit Score: " + customer.getCreditScore())
@@ -264,17 +293,17 @@ final public class Bank {
 
     //using stream to print list of customer age within range
     public void printStreamCusWithAge(int startAge, int endAge) {
-        List<String> cusAge = getCustomerList().stream()
+        List<String> cusAge = customerList.stream()
                 .filter(customer -> customer.getAge() > startAge && customer.getAge() < endAge)
                 .map(customer -> "Name: " + customer.getCustomerName() + " - Age: " + customer.getAge())
                 .collect(Collectors.toList());
 
-        cusAge.forEach(customer -> LOGGER.info(customer));
+        cusAge.forEach(LOGGER::info);
     }
 
     //using stream to print average credit score of certain customers age
     public void printAverageCredWithAge(int startAge, int endAge) {
-        double average = getCustomerList().stream()
+        double average = customerList.stream()
                 .filter(customer -> customer.getAge() > startAge && customer.getAge() < endAge)
                 .mapToInt(Customer::getCreditScore)
                 .average()

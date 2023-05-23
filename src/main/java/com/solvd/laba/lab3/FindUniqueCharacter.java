@@ -53,7 +53,6 @@ public class FindUniqueCharacter {
             //call method count all word and append to file Unique Text Word
             countAndWriteToFile(fileName, countAllWords(text));
 
-
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find file name" + e.getMessage());
         } catch (NullPointerException e) {

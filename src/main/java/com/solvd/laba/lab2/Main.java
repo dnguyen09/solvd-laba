@@ -35,32 +35,60 @@ public class Main {
         LOGGER.info("Account number: " + bank.getAccountNumber(account1) + "\n");
         Account account2 = bank.createAccount(cus2, 4000);
         LOGGER.info("Account number: " + bank.getAccountNumber(account2));
-        bank.createAccount(cus3, 2000);
-        bank.createAccount(cus4, 5000);
-        bank.createAccount(cus5, 12000);
-        bank.createAccount(cus6, 2000);
-
 
         //create checking account from account
-        System.out.println("\n=======Checking Account=======");
+        LOGGER.info("\n=======Checking Account=======");
+
+        //create checking account from  account1
         CheckingAccount check1 = bank.createCheckingAccount(account1);
+
+        //checking account number of check1
         LOGGER.info("Checking number: " + bank.getAccountNumber(check1));
+
+        //create checking account from  account2
         CheckingAccount check2 = bank.createCheckingAccount(account2);
+
+        //checking account number of check2
         LOGGER.info("Checking number: " + bank.getAccountNumber(check2) + "\n");
 
+        //adding more account
+        bank.createCheckingAccount(bank.createAccount(cus3, 1000));
+        bank.createCheckingAccount(bank.createAccount(cus4, 5000));
+        bank.createCheckingAccount(bank.createAccount(cus5, 12000));
+        bank.createCheckingAccount(bank.createAccount(cus6, 3200));
+
+        //print list of checking account that balance greater than 2000
+        LOGGER.info("Checking accounts have balance greater than 2000 \n" +
+                bank.printFilterAccount(account -> account.getBalance() > 2000) + "\n");
+
+        //Checking monthly fee
         bank.checkMonthlyFee(check1);
+        bank.checkMonthlyFee(check2);
+
+        //deposit to check1
         bank.deposit(check1, 1000);
         LOGGER.info("Balance check1: " + bank.checkBalance(check1));
+
+        //checking monthly fee again check1
         bank.checkMonthlyFee(check1);
+
+        //balance check2 before transfer money to check1
         LOGGER.info("Balance check2: " + bank.checkBalance(check2));
+
+        //transfer money from check2 to check1
         bank.transferMoney(check2, check1, 500);
 
+        //checking balance check1 after receive money from check2
         LOGGER.info("Balance check1: " + bank.checkBalance(check1));
+
+        //balance check2 after transfer money to check1
         LOGGER.info("Balance check2: " + bank.checkBalance(check2));
+
+        //print transaction list of check1
         bank.printList(check1);
         System.out.println();
 
-        //create saving account from account
+        //create saving account from account1
         System.out.println("\n=======Saving Account=======");
         SavingAccount save1 = bank.createSavingAccount(account1);
         LOGGER.info("Saving number: " + bank.getAccountNumber(save1));
@@ -69,17 +97,12 @@ public class Main {
         bank.deposit(save1, 2000);
         LOGGER.info(bank.checkBalance(save1));
         bank.checkInterestRate(save1);
-        bank.calculator(() -> {
-            double interestRate = 0.15;
-            int year = 1;
-            double result = save1.getBalance() * (interestRate / 100) * year + save1.getBalance();
-            LOGGER.info("Based on your interest rate: {}", interestRate);
-            LOGGER.info("Your balance after {} year(s) is {}", year, result);
-            return result;
+        bank.calculator(0.15, 2, (interestRate, numOfYear) -> {
+            return save1.getBalance() * (interestRate / 100) * numOfYear + save1.getBalance();
         });
 
-        //create debit card from checking account
-        System.out.println("\n=======Debit Card=======");
+        //create debit card from checking account1
+        LOGGER.info("\n=======Debit Card=======");
         DebitCard debitCard1 = bank.createDebitCard(check1);
         LOGGER.info(bank.getInfo(debitCard1));
         LOGGER.info(bank.checkBalance(debitCard1));
@@ -90,8 +113,8 @@ public class Main {
         LOGGER.info(bank.checkBalance(debitCard1));
         bank.printList(debitCard1);
 
-        //create credit card from account
-        System.out.println("\n=======Credit Card=======");
+        //create credit card from account1
+        LOGGER.info("\n=======Credit Card=======");
         CreditCard creditCard1 = bank.createCreditCard(account1);
         LOGGER.info(bank.getInfo(creditCard1));
         LOGGER.info(bank.checkBalance(creditCard1));
@@ -107,13 +130,13 @@ public class Main {
         bank.printList(creditCard1);
 
         //lambda
-        System.out.println("\n=======Lambda=======");
+        LOGGER.info("\n=======Lambda=======");
 
         //print customers credit score within range
         bank.printCustomerCredScoreInRange(500, 700);
 
         //Stream
-        System.out.println("\n=======Stream=======");
+        LOGGER.info("\n=======Stream=======");
 
         //print customer credit score within range using stream
         bank.printStreamCusCredScoreRange(400, 1200);

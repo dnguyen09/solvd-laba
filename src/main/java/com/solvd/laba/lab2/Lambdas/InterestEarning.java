@@ -1,5 +1,6 @@
 package com.solvd.laba.lab2.Lambdas;
 
+@FunctionalInterface
 public interface InterestEarning<T> {
-    T calculate();
+    T calculate(double interestRate, int year);
 }

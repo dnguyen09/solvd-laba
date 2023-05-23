@@ -60,8 +60,7 @@ public class Reflection {
 
         //initialize constructor using reflection
         Account account = (Account) constructor.newInstance(new Customer("Skirmish", "01-17-1981", 600), 3000);
-
-
+        
         //Invoke method using reflection
         Method accMethod1 = accountClass.getMethod("getBalance");
         LOGGER.info(accMethod1.invoke(account));

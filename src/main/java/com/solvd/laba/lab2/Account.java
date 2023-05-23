@@ -142,7 +142,7 @@ public class Account implements PrintList, Payment {
     }
 
     public long IdAccount(String id, RandGenerate<Integer> rand) {
-        String accountNum = id + rand.randNumber() + AccountNumber.lastAccNum;
+        String accountNum = id + rand.genRandNum() + AccountNumber.lastAccNum;
         AccountNumber.lastAccNum++;
         return Long.parseLong(accountNum);
     }
