@@ -1,12 +1,12 @@
 package com.solvd.laba.lab2;
 
 
-import com.solvd.laba.lab2.Lambdas.RandGenerate;
 import com.solvd.laba.lab2.enums.AccountType;
 import com.solvd.laba.lab2.enums.TransactionType;
 import com.solvd.laba.lab2.exception.InsufficientBalanceException;
 import com.solvd.laba.lab2.interfaces.Payment;
 import com.solvd.laba.lab2.interfaces.PrintList;
+import com.solvd.laba.lab2.lambdas.RandGenerate;
 import com.solvd.laba.lab2.linkedllst.LinkedListCustom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

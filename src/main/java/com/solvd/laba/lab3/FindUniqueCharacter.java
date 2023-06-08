@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FindUniqueCharacter {
     //count the number of times letter 'a' appears
@@ -19,9 +21,29 @@ public class FindUniqueCharacter {
     }
 
     //count all word in text
-    public static String countAllWords(String text) {
+    public static String countAllUniqueWord(String text) {
+        // Split the text into words
         String[] words = StringUtils.split(text);
-        return "Number of words: " + words.length;
+
+        // Iterate through the words and clean them
+        for (int i = 0; i < words.length; i++) {
+
+            // Remove trailing punctuation marks
+            words[i] = words[i].replaceAll("[.,!?]+$", "");
+        }
+
+        // Create a set to store unique words
+        Set<String> uniqueWords = new HashSet<>();
+
+        // Iterate through the cleaned words
+        for (String word : words) {
+            // Exclude empty words
+            if (!word.isEmpty()) {
+                uniqueWords.add(word);
+            }
+        }
+
+        return "Total unique words: " + uniqueWords.size();
     }
 
     //method to write to file
@@ -51,7 +73,7 @@ public class FindUniqueCharacter {
             countAndWriteToFile(fileName, countTLetter(text));
 
             //call method count all word and append to file Unique Text Word
-            countAndWriteToFile(fileName, countAllWords(text));
+            countAndWriteToFile(fileName, countAllUniqueWord(text));
 
         } catch (FileNotFoundException e) {
             System.out.println("Cannot find file name" + e.getMessage());

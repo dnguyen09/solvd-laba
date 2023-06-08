@@ -117,7 +117,7 @@ public class CreditCard extends Account implements CardCreating, InterestRate {
     }
 
     //method to create CVV
-    public int generateCVV() throws CVVException {
+    public int generateCVV() {
         Random random = new Random();
         int cvv = random.nextInt(900) + 100;
 
